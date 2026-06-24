@@ -1,9 +1,9 @@
 import { useContext } from "react";
 import NavbarContext from "../../context/NavbarContext";
-import { Link, useNavigate } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 
 const MobileMenu = () => {
-    const {isOpen, setIsOpen} = useContext(NavbarContext);
+    const {isOpen, setIsOpen, navClassActive} = useContext(NavbarContext);
     const navigate = useNavigate();
 
     return (
@@ -47,10 +47,10 @@ const MobileMenu = () => {
             </div>
 
             <nav className="flex flex-col gap-4 px-5 py-6">
-                <Link to={"/"}>Home</Link>
-                <Link to={"/products"}>Products</Link>
-                <Link to={"/contact"}>Contact</Link>
-                <Link to={"/about"}>About</Link>
+                <NavLink to={"/"} className={navClassActive}>Home</NavLink>
+                <NavLink to={"/products"} className={navClassActive}>Products</NavLink>
+                <NavLink to={"/contact"} className={navClassActive}>Contact</NavLink>
+                <NavLink to={"/about"} className={navClassActive}>About</NavLink>
             </nav>
 
             <div className="border-t px-5 py-6">

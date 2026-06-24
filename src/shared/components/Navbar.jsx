@@ -1,9 +1,9 @@
 import { useContext } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 import NavbarContext from "../../context/NavbarContext";
 
 const Navbar = () => {
-    const {setIsOpen} = useContext(NavbarContext);
+    const {setIsOpen, navClassActive} = useContext(NavbarContext);
     const navigate = useNavigate();
 
     return (
@@ -17,23 +17,23 @@ const Navbar = () => {
 
         {/* Center: Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
-            <Link to={"/"}>Home</Link>
-            <Link to={"/products"}>Products</Link>
-            <Link to={"/contact"}>Contact</Link>
-            <Link to={"/about"}>About</Link>
+            <NavLink to={"/"} className={navClassActive}>Home</NavLink>
+            <NavLink to={"/products"} className={navClassActive}>Products</NavLink>
+            <NavLink to={"/contact"} className={navClassActive}>Contact</NavLink>
+            <NavLink to={"/about"} className={navClassActive}>About</NavLink>
         </nav>
 
         {/* Right: Desktop Actions */}
         <div className="hidden md:flex items-center gap-5">
             <Link
             to="/login"
-            className="text-gray-700 font-medium transition hover:text-blue-600"
+            className="text-gray-700 font-medium transition hover:text-orange-300"
             >
             Login
             </Link>
-            <button className="relative text-gray-700 transition hover:text-blue-600" onClick={() => navigate('/cart')}>
+            <button className="relative text-gray-700 transition hover:text-orange-300 cursor-pointer" onClick={() => navigate('/cart')}>
                 <span className="font-medium">Cart</span>
-                <span className="absolute -top-2 -right-3 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs text-white">
+                <span className="absolute -top-2 -right-3 flex h-5 w-5 items-center justify-center rounded-full bg-orange-300 text-xs text-white">
                     2
                 </span>
             </button>
