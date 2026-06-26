@@ -1,9 +1,10 @@
 import { useContext } from "react";
 import { Link, NavLink, useNavigate } from "react-router";
 import NavbarContext from "../../context/NavbarContext";
+import { navClassActive } from "../utils/navClassHelper";
 
 const Navbar = () => {
-    const {setIsOpen, navClassActive} = useContext(NavbarContext);
+    const {setIsOpen} = useContext(NavbarContext);
     const navigate = useNavigate();
 
     return (

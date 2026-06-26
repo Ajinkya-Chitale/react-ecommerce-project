@@ -1,9 +1,10 @@
 import { useContext } from "react";
 import NavbarContext from "../../context/NavbarContext";
 import { Link, NavLink, useNavigate } from "react-router";
+import { navClassActive } from "../utils/navClassHelper";
 
 const MobileMenu = () => {
-    const {isOpen, setIsOpen, navClassActive} = useContext(NavbarContext);
+    const {isOpen, setIsOpen} = useContext(NavbarContext);
     const navigate = useNavigate();
 
     return (
