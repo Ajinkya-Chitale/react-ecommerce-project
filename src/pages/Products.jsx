@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react"
 import { getProducts } from "../features/product/services/productService"
 import LoaderContext from "../context/LoaderContext";
 import ProductCard from "../features/product/components/ProductCard";
+import Loader from "../shared/components/Loader";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -31,7 +32,7 @@ const Products = () => {
       loadProducts();
   }, [showLoader, hideLoader])
 
-  if (loading) return <h2>Loading...</h2>;
+  if (loading) return <Loader />;
   if (error) return <h2>{error}</h2>;
 
   return (
