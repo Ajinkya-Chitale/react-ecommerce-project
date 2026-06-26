@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react"
 import { getProducts } from "../features/product/services/productService"
 import LoaderContext from "../context/LoaderContext";
-import Product from "../features/product/components/product";
+import ProductCard from "../features/product/components/ProductCard";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -35,13 +35,15 @@ const Products = () => {
   if (error) return <h2>{error}</h2>;
 
   return (
-    <div>
-        {
-          products.map((item, index) => (
-            <Product key={`${item.sold}${index}`} item={item} />
-          ))
-        }
-    </div>
+    <section className="px-4 sm:px-6 lg:px-10 py-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-8">
+          {
+            products.map((product, index) => (
+              <ProductCard key={`${product.sold}${index}`} product={product} />
+            ))
+          }
+          </div>
+    </section>
   )
 }
 
