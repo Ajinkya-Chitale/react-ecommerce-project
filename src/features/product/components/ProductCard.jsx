@@ -3,8 +3,9 @@ const ProductCard = ({ product }) => {
   const {image, slug, name} = product.category;
 
   return (  
-    <div className='w-[207px]'>
-      <div className="w-full h-\[263px\] overflow-hidden bg-gray-100">
+
+    <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-sm transition hover:shadow-md">
+      <div className="mb-3 h-40 rounded-md bg-gray-100">
         <img
           src={image}
           alt={slug}
@@ -12,10 +13,18 @@ const ProductCard = ({ product }) => {
         />
       </div>
 
-      <div className="mt-4">
-        <p className="text-sm text-gray-400">{name}</p>
-        <h3 className="mt-1 text-lg font-semibold text-gray-900 leading-none">{title}</h3>
-        <p className="mt-3 text-base text-gray-700">${price}</p>
+      <h3 className="line-clamp-1 text-sm font-semibold text-gray-800">
+        {name}
+      </h3>
+
+      <p className="mt-1 text-sm text-gray-500">{title}</p>
+
+      <div className="mt-3 flex items-center justify-between">
+        <span className="font-semibold text-gray-900">${price}</span>
+
+        <button className="rounded-md bg-orange-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-orange-600">
+          Add
+        </button>
       </div>
     </div>
   )}
