@@ -10,8 +10,24 @@ const Products = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [showAllCategories, setShowAllCategories] = useState(false);
+  const [showAllBrands, setShowAllBrands] = useState(false);
   const [error, setError] = useState("");
   const {loading, showLoader, hideLoader} = useContext(LoaderContext);
+
+  // Show only fist 5 categories
+  const visibleCategories = showAllCategories ? categories : categories.slice(0, 5);
+
+  // Show only first 5 brands
+  const visibleBrands = showAllBrands ? brands : brands.slice(0, 5);
+
+  const handleBrandToggle = () => {
+    setShowAllBrands(!showAllBrands);
+  }
+
+  const handleCategoriesToggle = () => {
+    setShowAllCategories(!showAllCategories);
+  }
 
   // Fetch Product List
   const fetchProducts = async () => {
@@ -86,7 +102,7 @@ const Products = () => {
 
   if (loading) return <Loader />;
   if (error) return <h2>{error}</h2>;
-  if(products.length < 1) return <div className="w-[300px] h-[200px] mx-auto my-4 shadow-lg">
+  if(products.length < 1) return <div className="w-80 h-52 mx-auto my-4 shadow-lg">
       <p className="h-full w-full p-5 flex items-center justify-center font-semibold">No products available.</p>
     </div>
 
@@ -94,13 +110,14 @@ const Products = () => {
     <section className="px-4 sm:px-6 lg:px-10 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-5">
           {/* Sidebar Filter Section */}
+
           <aside className="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm lg:sticky lg:h-fit">
             <div className="mb-5 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-800">Filters</h2>
 
               <button
                 type="button"
-                className="text-sm font-medium text-orange-500 hover:text-orange-600"
+                className="cursor-pointer text-sm font-medium text-orange-500 hover:text-orange-600"
               >
                 Clear
               </button>
@@ -113,22 +130,28 @@ const Products = () => {
               </h3>
 
               <div className="space-y-3">
-                {categories.map((category, index) => (
+                {visibleCategories.map((category, index) => (
                   <CategoryCard key={`${category._id}${index}`} category={category} />
                 ))}
+              </div>
+              <div className="flex justify-end mt-3">
+                <button type="button" className="cursor-pointer text-sm font-medium text-orange-500 hover:text-orange-600" onClick={handleCategoriesToggle}>{showAllCategories ? 'Show Less' : 'Show More'}</button>
               </div>
             </div>
 
             {/* Brands Section */}
-            <div className="mb-6">
+            <div>
               <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-700">
                 Brands
               </h3>
 
               <div className="space-y-3">
-                {brands.map((brand, index) => (
+                {visibleBrands.map((brand, index) => (
                   <BrandCard key={`${brand._id}${index}`} brand={brand} />
                 ))}
+              </div>
+              <div className="flex justify-end mt-3">
+                <button type="button" className="cursor-pointer text-sm font-medium text-orange-500 hover:text-orange-600" onClick={handleBrandToggle}>{showAllBrands ? 'Show Less' : 'Show More'}</button>
               </div>
             </div>
           </aside>
