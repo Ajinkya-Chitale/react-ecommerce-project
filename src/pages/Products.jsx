@@ -5,28 +5,27 @@ import ProductCard from "../features/product/components/ProductCard";
 import Loader from "../shared/components/Loader";
 import CategoryCard from "../features/product/components/CategoryCard";
 import BrandCard from "../features/product/components/BrandCard";
+import ProductContext from "../context/ProductContext";
 
 const Products = () => {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
+  const {setProducts, setCategories, setBrands, filteredCategories, filteredBrands, filteredProducts, setFilter} = useContext(ProductContext);
+  const {loading, showLoader, hideLoader} = useContext(LoaderContext);
   const [showAllCategories, setShowAllCategories] = useState(false);
   const [showAllBrands, setShowAllBrands] = useState(false);
   const [error, setError] = useState("");
-  const {loading, showLoader, hideLoader} = useContext(LoaderContext);
 
   // Show only fist 5 categories
-  const visibleCategories = showAllCategories ? categories : categories.slice(0, 5);
-
-  // Show only first 5 brands
-  const visibleBrands = showAllBrands ? brands : brands.slice(0, 5);
-
-  const handleBrandToggle = () => {
-    setShowAllBrands(!showAllBrands);
-  }
+  const visibleCategories = showAllCategories ? filteredCategories : filteredCategories.slice(0, 5);
 
   const handleCategoriesToggle = () => {
     setShowAllCategories(!showAllCategories);
+  }
+
+  // Show only first 5 brands
+  const visibleBrands = showAllBrands ? filteredBrands : filteredBrands.slice(0, 5);
+
+  const handleBrandToggle = () => {
+    setShowAllBrands(!showAllBrands);
   }
 
   // Fetch Product List
@@ -51,7 +50,7 @@ const Products = () => {
       }
 
       loadProducts();
-  }, [showLoader, hideLoader])
+  }, [showLoader, hideLoader, setProducts])
 
   // Fetch Product Categories
   const fetchCategories = async () => {
@@ -74,7 +73,7 @@ const Products = () => {
     }
 
     loadCategories();
-  }, [showLoader, hideLoader])
+  }, [showLoader, hideLoader, setCategories])
 
   // Fetch Brands
   const fetchBrands = async () => {
@@ -98,13 +97,18 @@ const Products = () => {
     }
 
     loadBrands();
-  }, [showLoader, hideLoader])
+  }, [showLoader, hideLoader, setBrands])
+
+  // Clear Filter Selection
+  const handleClear = () => {
+    setFilter({
+        selectedCategories: [],
+        selectedBrands: []
+    })
+  }
 
   if (loading) return <Loader />;
   if (error) return <h2>{error}</h2>;
-  if(products.length < 1) return <div className="w-80 h-52 mx-auto my-4 shadow-lg">
-      <p className="h-full w-full p-5 flex items-center justify-center font-semibold">No products available.</p>
-    </div>
 
   return (
     <section className="px-4 sm:px-6 lg:px-10 py-6">
@@ -112,12 +116,13 @@ const Products = () => {
           {/* Sidebar Filter Section */}
 
           <aside className="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm lg:sticky lg:h-fit">
-            <div className="mb-5 flex items-center justify-between">
+            <div className="mb-5 flex items-center justify-between pb-2 border-b-2 border-b-orange-500">
               <h2 className="text-lg font-semibold text-gray-800">Filters</h2>
 
               <button
                 type="button"
-                className="cursor-pointer text-sm font-medium text-orange-500 hover:text-orange-600"
+                className="cursor-pointer text-sm font-semibold text-orange-500 hover:text-orange-600"
+                onClick={handleClear}
               >
                 Clear
               </button>
@@ -134,8 +139,8 @@ const Products = () => {
                   <CategoryCard key={`${category._id}${index}`} category={category} />
                 ))}
               </div>
-              <div className="flex justify-end mt-3">
-                <button type="button" className="cursor-pointer text-sm font-medium text-orange-500 hover:text-orange-600" onClick={handleCategoriesToggle}>{showAllCategories ? 'Show Less' : 'Show More'}</button>
+              <div className={`flex justify-end mt-3 ${visibleCategories.length < 5} ? hidden : d-block`}>
+                <button type="button" className="cursor-pointer text-sm text-orange-500 hover:text-orange-600 font-semibold" onClick={handleCategoriesToggle}>{showAllCategories ? 'Show Less' : 'Show More'}</button>
               </div>
             </div>
 
@@ -150,8 +155,8 @@ const Products = () => {
                   <BrandCard key={`${brand._id}${index}`} brand={brand} />
                 ))}
               </div>
-              <div className="flex justify-end mt-3">
-                <button type="button" className="cursor-pointer text-sm font-medium text-orange-500 hover:text-orange-600" onClick={handleBrandToggle}>{showAllBrands ? 'Show Less' : 'Show More'}</button>
+              <div className={`flex justify-end mt-3 ${visibleBrands.length < 5} ? hidden : d-block`}>
+                <button type="button" className="cursor-pointer text-sm text-orange-500 hover:text-orange-600 font-semibold" onClick={handleBrandToggle}>{showAllBrands ? 'Show Less' : 'Show More'}</button>
               </div>
             </div>
           </aside>
@@ -159,19 +164,28 @@ const Products = () => {
           {/* Product Section */}
           <div>
             <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <h1 className="text-xl font-semibold text-gray-800">Products</h1>
+              <h1 className="text-xl font-semibold text-gray-800">Products (<span className="text-sm">{filteredProducts.length}</span>)</h1>
 
               <p className="text-sm text-gray-500">
                 Showing products based on selected filters
               </p>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-8">
-              {
-                products.map((product, index) => (
-                  <ProductCard key={`${product.sold}${index}`} product={product} />
-                ))
-              }
-            </div>
+            {
+              (filteredProducts.length > 0)
+              ? (<div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-8">
+                {
+                  filteredProducts.map((product, index) => (
+                    <ProductCard key={`${product.sold}${index}`} product={product} />
+                  ))
+                }
+              </div>)
+              : (<div className="w-full h-52 mx-auto my-4 shadow-lg">
+                  <div className="h-full w-full p-5 flex flex-col items-center justify-center font-semibold">
+                    <p>No products available.</p>
+                    <p>Please modify filter criteria.</p>
+                  </div>
+                </div>)
+            }
           </div>
         </div>
     </section>

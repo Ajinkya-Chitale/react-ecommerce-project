@@ -7,6 +7,7 @@ import Products from "../pages/Products";
 import NotFound from "../pages/NotFound";
 import Login from "../pages/Login";
 import Cart from "../pages/Cart";
+import { ProductContextProvider } from "../context/ProductContext";
 
 const router = createBrowserRouter([
     {
@@ -27,7 +28,10 @@ const router = createBrowserRouter([
             },
             {
                 path: "products",
-                element: <Products />
+                element: (
+                <ProductContextProvider>
+                    <Products />
+                </ProductContextProvider>)
             },
             {
                 path: "cart",

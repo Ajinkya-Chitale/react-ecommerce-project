@@ -1,5 +1,22 @@
+import { useContext } from "react";
+import ProductContext from "../../../context/ProductContext";
+
 const BrandCard = ({brand}) => {
     const {_id, name} = brand
+    const {filter, setFilter} = useContext(ProductContext);
+
+    const handleBrandChange = (brandId) => {
+        setFilter((prev) => {
+            const isSelected = filter.selectedBrands.includes(brandId);
+
+            return {
+                ...prev,
+                selectedBrands: isSelected
+                ? filter.selectedBrands.filter((item) => item !== brandId)
+                : [...prev.selectedBrands, brandId]
+            }
+        })
+    }
 
     return (
         <>
@@ -9,8 +26,8 @@ const BrandCard = ({brand}) => {
             >
                 <input
                 type="checkbox"
-                // checked={selectedCategories.includes(category)}
-                // onChange={() => handleCategoryChange(category)}
+                checked={filter.selectedBrands.includes(brand._id)}
+                onChange={() => handleBrandChange(brand._id)}
                 className="h-4 w-4 rounded border-gray-300 accent-orange-500"
                 />
                 <span>{name}</span>
