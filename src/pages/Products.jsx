@@ -168,7 +168,7 @@ const Products = () => {
                   <CategoryCard key={`${category._id}${index}`} category={category} />
                 ))}
               </div>
-              <div className={`flex justify-end mt-3 ${visibleCategories.length < 5} ? hidden : d-block`}>
+              <div className={`flex justify-end mt-3 ${visibleCategories.length < 5 ? 'hidden' : 'd-block'}`}>
                 <button type="button" className="cursor-pointer text-sm text-orange-500 hover:text-orange-600 font-semibold" onClick={handleCategoriesToggle}>{showAllCategories ? 'Show Less' : 'Show More'}</button>
               </div>
             </div>
@@ -184,7 +184,7 @@ const Products = () => {
                   <BrandCard key={`${brand._id}${index}`} brand={brand} />
                 ))}
               </div>
-              <div className={`flex justify-end mt-3 ${visibleBrands.length < 5} ? hidden : d-block`}>
+              <div className={`flex justify-end mt-3 ${visibleBrands.length < 5 ? 'hidden' : 'd-block'}`}>
                 <button type="button" className="cursor-pointer text-sm text-orange-500 hover:text-orange-600 font-semibold" onClick={handleBrandToggle}>{showAllBrands ? 'Show Less' : 'Show More'}</button>
               </div>
             </div>
