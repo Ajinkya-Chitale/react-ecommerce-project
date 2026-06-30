@@ -2,11 +2,12 @@ import { useContext, useEffect, useState } from "react"
 import { getBrands, getCategories, getProducts } from "../features/product/services/productService"
 import LoaderContext from "../context/LoaderContext";
 import ProductCard from "../features/product/components/ProductCard";
-import Loader from "../shared/components/Loader";
 import CategoryCard from "../features/product/components/CategoryCard";
 import BrandCard from "../features/product/components/BrandCard";
 import ProductContext from "../context/ProductContext";
 import InfiniteScroll from "react-infinite-scroll-component";
+import ProductSkeletonGrid from "../features/product/components/ProductSkeletonGrid";
+import ProductCardSkeleton from "../features/product/components/ProductCardSkeleton";
 
 const Products = () => {
   const LIMIT = 12; // Initial product limit to render
@@ -136,7 +137,7 @@ const Products = () => {
     })
   }
 
-  if (loading) return <Loader />;
+  if (loading) return <ProductCardSkeleton />;
   if (error) return <h2>{error}</h2>;
 
   return (
@@ -205,17 +206,17 @@ const Products = () => {
                 dataLength={products.length}
                 next={fetchMoreProducts}
                 hasMore={hasMore}
-                loader={<h4 className="text-sm text-center font-semibold mt-3">Loading more items...</h4>}
+                loader={<ProductSkeletonGrid count={4} />}
                 endMessage={
-                  <p className='text-center mt-3'>
-                    <b>Yay! You have seen it all</b>
+                  <p className='py-6 text-center text-sm text-gray-400'>
+                    No more products.
                   </p>
                 }
                 >
                   <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-8">
                     {
-                      filteredProducts.map((product, index) => (
-                        <ProductCard key={`${product.sold}${index}`} product={product} />
+                      filteredProducts.map((product) => (
+                        <ProductCard key={product.id} product={product} />
                       ))
                     }
                   </div>
