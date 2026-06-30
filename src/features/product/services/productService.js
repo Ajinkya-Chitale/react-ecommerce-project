@@ -1,8 +1,8 @@
 import axiosInstacne from "../../../api/axiosInstance";
 
 // Fetch Products
-export const getProducts = async () => {
-    const response = await axiosInstacne.get('/products');
+export const getProducts = async (limit, page) => {
+    const response = await axiosInstacne.get(`/products?limit=${limit}&page=${page}`);
     const data = await response.data;
     return data;
 }

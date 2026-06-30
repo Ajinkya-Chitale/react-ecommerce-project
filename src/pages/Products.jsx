@@ -6,9 +6,11 @@ import Loader from "../shared/components/Loader";
 import CategoryCard from "../features/product/components/CategoryCard";
 import BrandCard from "../features/product/components/BrandCard";
 import ProductContext from "../context/ProductContext";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const Products = () => {
-  const {setProducts, setCategories, setBrands, filteredCategories, filteredBrands, filteredProducts, setFilter} = useContext(ProductContext);
+  const LIMIT = 12; // Initial product limit to render
+  const {products, setProducts, setCategories, setBrands, filteredCategories, filteredBrands, filteredProducts, setFilter, page, setPage, hasMore, setHasMore} = useContext(ProductContext);
   const {loading, showLoader, hideLoader} = useContext(LoaderContext);
   const [showAllCategories, setShowAllCategories] = useState(false);
   const [showAllBrands, setShowAllBrands] = useState(false);
@@ -29,17 +31,44 @@ const Products = () => {
   }
 
   // Fetch Product List
-  const fetchProducts = async () => {
-    const result = await getProducts();
-    return result.data;
+  const fetchMoreProducts = async () => {
+    try {
+      const result = await getProducts(LIMIT, page);
+      const data = result.data;
+
+      // If no data comes back, tell the component to stop scrolling
+      if (!data || data.length === 0) {
+        setHasMore(false);
+        return;
+      }
+
+      // Append new data to existing state and increment page count
+      setProducts((prevItems) => [...prevItems, ...data]);
+
+      if (data.length < LIMIT) {
+        setHasMore(false);
+      }
+
+      setPage((prevPage) => prevPage + 1);
+    }
+    catch {
+      setError("Failed to fetch products.");
+    }
   }
 
   useEffect(() => {
-      const loadProducts = async () => {
+      const loadInitialProducts = async () => {
         try {
           showLoader();
-          const data = await fetchProducts();
+          const result = await getProducts(LIMIT, 1);
+          const data = result.data;
           setProducts(data);
+
+          if (data.length < LIMIT) {
+            setHasMore(false);
+          }
+
+          setPage(2);
         }
         catch {
           setError("Failed to fetch products.");
@@ -47,10 +76,10 @@ const Products = () => {
         finally {
           hideLoader();
         }
-      }
+      };
 
-      loadProducts();
-  }, [showLoader, hideLoader, setProducts])
+      loadInitialProducts();
+  }, [setPage, setProducts, setHasMore, showLoader, hideLoader])
 
   // Fetch Product Categories
   const fetchCategories = async () => {
@@ -172,19 +201,31 @@ const Products = () => {
             </div>
             {
               (filteredProducts.length > 0)
-              ? (<div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-8">
-                {
-                  filteredProducts.map((product, index) => (
-                    <ProductCard key={`${product.sold}${index}`} product={product} />
-                  ))
+              ? <InfiniteScroll
+                dataLength={products.length}
+                next={fetchMoreProducts}
+                hasMore={hasMore}
+                loader={<h4 className="text-sm text-center font-semibold mt-3">Loading more items...</h4>}
+                endMessage={
+                  <p className='text-center mt-3'>
+                    <b>Yay! You have seen it all</b>
+                  </p>
                 }
-              </div>)
-              : (<div className="w-full h-52 mx-auto my-4 shadow-lg">
+                >
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-8">
+                    {
+                      filteredProducts.map((product, index) => (
+                        <ProductCard key={`${product.sold}${index}`} product={product} />
+                      ))
+                    }
+                  </div>
+                </InfiniteScroll>
+              : <div className="w-full h-52 mx-auto my-4 border border-gray-200 shadow-sm">
                   <div className="h-full w-full p-5 flex flex-col items-center justify-center font-semibold">
                     <p>No products available.</p>
                     <p>Please modify filter criteria.</p>
                   </div>
-                </div>)
+                </div>
             }
           </div>
         </div>

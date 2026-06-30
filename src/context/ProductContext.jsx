@@ -4,9 +4,10 @@ const ProductContext = createContext();
 
 export const ProductContextProvider = ({children}) => {
     const [products, setProducts] = useState([]);
+    const [hasMore, setHasMore] = useState(true);
+    const [page, setPage] = useState(1);
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
-
     const [filter, setFilter] = useState({
         selectedCategories: [],
         selectedBrands: []
@@ -58,9 +59,9 @@ export const ProductContextProvider = ({children}) => {
     
     const value = useMemo(() => {
         return {
-            products, setProducts, categories, setCategories, brands, setBrands, filteredCategories, filteredBrands, filter, setFilter, filteredProducts
+            products, setProducts, categories, setCategories, brands, setBrands, filteredCategories, filteredBrands, filter, setFilter, filteredProducts, page, setPage, hasMore, setHasMore
         }
-    }, [products, categories, brands, filteredCategories, filteredBrands, filter, filteredProducts])
+    }, [products, categories, brands, filteredCategories, filteredBrands, filter, filteredProducts, page, hasMore])
 
     return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>
 }
